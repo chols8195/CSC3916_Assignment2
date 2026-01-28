@@ -3,6 +3,7 @@ CSC3916 HW2
 File: Server.js
 Description: Web API scaffolding for Movie API
  */
+require('dotenv').config();
 
 var express = require('express');
 var http = require('http');
@@ -71,6 +72,47 @@ router.post('/signin', (req, res) => {
         }
     }
 });
+
+router.route('/movies')
+    .get((req, res) => {
+        var o = getJSONObjectForMovieRequirement(req);
+        o.status = 200;
+        o.message = "GET movies";
+        res.json(o);
+    })
+
+    .post((req, res) => {
+        var o = getJSONObjectForMovieRequirement(req);
+        o.status = 200;
+        o.message = "movie saved";
+        res.json(o);
+    })
+
+    .put(authJwtController.isAuthenticated, (req, res) => {
+        console.log(req.body);
+        if (req.get('Content-Type')) {
+            res = res.type(req.get('Content-Type'))
+        }
+        var o = getJSONObjectForMovieRequirement(req);
+        o.status = 200;
+        o.message = "movie updated";
+        res.json(o);
+    })
+
+    .delete(authController.isAuthenticated, (req, res) => {
+        console.log(req.body);
+        if (req.get('Content-Type')) {
+            res = res.type(req.get('Content-Type'))
+        }
+        var o = getJSONObjectForMovieRequirement(req);
+        o.status = 200;
+        o.message = "movie deleted";
+        res.json(o);        
+    })
+
+    .all((req, res) => {
+        res.status(405).send({ message: "HTTP method not supported" });
+    })
 
 router.route('/testcollection')
     .delete(authController.isAuthenticated, (req, res) => {
